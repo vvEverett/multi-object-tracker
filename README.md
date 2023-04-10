@@ -34,10 +34,12 @@ detector.YOLOv3
 Pip install for OpenCV (version 3.4.3 or later) is available [here](https://pypi.org/project/opencv-python/) and can be done with the following command:
 
 ```
-git clone https://github.com/adipandas/multi-object-tracker
+git clone https://github.com/vvEverett/multi-object-tracker.git
 cd multi-object-tracker
 pip install -r requirements.txt
-pip install -e .
+# pip install -e .
+python setup.py develop
+python setup_nanodet.py develop
 ```
 
 **Note - for using neural network models with GPU**  
