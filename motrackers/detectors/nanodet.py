@@ -60,11 +60,11 @@ class Nanodet(object):
         result_img, all_box = self.model.head.show_result(
             meta["raw_img"][0], dets, class_names, score_thres=score_thres, show=True
         )
-        self.class_names = class_names
         bboxes , confidences , class_ids = infotrans(all_box)
         print("viz time: {:.3f}s".format(time.time() - time1))
-        
+        self.class_names = dict(zip(class_ids,class_names))
         image = meta["raw_img"][0].copy()
+        np.random.seed(12345)
         for bb, conf, cid in zip(bboxes, confidences, class_ids):
             bbox_colors = {key: np.random.randint(0, 255, size=(3,)).tolist() for key in self.class_names.keys()}
             clr = [int(c) for c in bbox_colors[cid]]
@@ -76,29 +76,3 @@ class Nanodet(object):
                             (255, 255, 255), cv2.FILLED)
             cv2.putText(image, label, (bb[0], y_label), cv2.FONT_HERSHEY_SIMPLEX, 0.5, clr, 2)
         return bboxes , confidences , class_ids , image
-
-    def draw_bboxes(self, image, bboxes, confidences, class_ids):
-        """
-        Draw the bounding boxes about detected objects in the image.
-
-        Args:
-            image (numpy.ndarray): Image or video frame.
-            bboxes (numpy.ndarray): Bounding boxes pixel coordinates as (xmin, ymin, width, height)
-            confidences (numpy.ndarray): Detection confidence or detection probability.
-            class_ids (numpy.ndarray): Array containing class ids (aka label ids) of each detected object.
-
-        Returns:
-            numpy.ndarray: image with the bounding boxes drawn on it.
-        """
-
-        for bb, conf, cid in zip(bboxes, confidences, class_ids):
-            self.bbox_colors = {key: np.random.randint(0, 255, size=(3,)).tolist() for key in self.class_names.keys()}
-            clr = [int(c) for c in self.bbox_colors[cid]]
-            cv2.rectangle(image, (bb[0], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), clr, 2)
-            label = "{}:{:.4f}".format(self.class_names[cid], conf)
-            (label_width, label_height), baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
-            y_label = max(bb[1], label_height)
-            cv2.rectangle(image, (bb[0], y_label - label_height), (bb[0] + label_width, y_label + baseLine),
-                         (255, 255, 255), cv2.FILLED)
-            cv2.putText(image, label, (bb[0], y_label), cv2.FONT_HERSHEY_SIMPLEX, 0.5, clr, 2)
-        return image
