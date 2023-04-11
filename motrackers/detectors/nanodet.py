@@ -75,4 +75,6 @@ class Nanodet(object):
             cv2.rectangle(image, (bb[0], y_label - label_height), (bb[0] + label_width, y_label + baseLine),
                             (255, 255, 255), cv2.FILLED)
             cv2.putText(image, label, (bb[0], y_label), cv2.FONT_HERSHEY_SIMPLEX, 0.5, clr, 2)
+        bboxes = np.array(bboxes).astype('int')
+        confidences = np.array(confidences)
         return bboxes , confidences , class_ids , image
