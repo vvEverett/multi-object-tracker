@@ -8,8 +8,22 @@ from nanodet.util import Logger, cfg, load_config, load_model_weight
 VIDEO_FILE = r"D:\shijue\LiquidDrop\22.avi"
 WEIGHTS_PATH = 'weight/LiquidV4.pth'
 CONFIG_FILE_PATH = 'config/LiquidDetect416.yml'
+CHOSEN_TRACKER = 'SORT'
+CONFIDENCE_THRESHOLD = 0.4 # 目标检测的置信度筛选
 
-tracker = CentroidTracker(max_lost=0, tracker_output_format='mot_challenge')
+
+
+if CHOSEN_TRACKER == 'CentroidTracker':
+    tracker = CentroidTracker(max_lost=0, tracker_output_format='mot_challenge')
+elif CHOSEN_TRACKER == 'CentroidKF_Tracker':
+    tracker = CentroidKF_Tracker(max_lost=0, tracker_output_format='mot_challenge')
+elif CHOSEN_TRACKER == 'SORT':
+    tracker = SORT(max_lost=3, tracker_output_format='mot_challenge', iou_threshold=0.3)
+elif CHOSEN_TRACKER == 'IOUTracker':
+    tracker = IOUTracker(max_lost=2, iou_threshold=0.5, min_detection_confidence=0.4, max_detection_confidence=0.7,
+                         tracker_output_format='mot_challenge')
+else:
+    print("Please choose one tracker from the above list.")
 
 # 导入模型文件
 local_rank = 0
@@ -32,7 +46,7 @@ def main(video_path, model, tracker):
             break
         
         meta, res = model.inference(image)
-        bboxes,confidences,class_ids,updated_image  = model.visualize(res[0], meta, cfg.class_names, 0.43)
+        bboxes,confidences,class_ids,updated_image  = model.visualize(res[0], meta, cfg.class_names, CONFIDENCE_THRESHOLD)
         
         tracks = tracker.update(bboxes, confidences, class_ids)
 
