@@ -6,8 +6,8 @@ from motrackers.utils import draw_tracks
 from nanodet.util import Logger, cfg, load_config, load_model_weight
 
 VIDEO_FILE = r"D:\shijue\LiquidDrop\22.avi"
-WEIGHTS_PATH = r'D:\shijue\multi-object-tracker\weight\LiquidV4.pth'
-CONFIG_FILE_PATH = r'D:\shijue\multi-object-tracker\config\LiquidDetect416.yml'
+WEIGHTS_PATH = 'weight/LiquidV4.pth'
+CONFIG_FILE_PATH = 'config/LiquidDetect416.yml'
 
 tracker = CentroidTracker(max_lost=0, tracker_output_format='mot_challenge')
 
