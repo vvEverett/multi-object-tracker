@@ -28,6 +28,7 @@ class Nanodet(object):
         self.pipeline = Pipeline(cfg.data.val.pipeline, cfg.data.val.keep_ratio)
 
     def inference(self, img):
+        self.image = img.copy()
         img_info = {"id": 0}
         if isinstance(img, str):
             img_info["file_name"] = os.path.basename(img)
@@ -63,18 +64,17 @@ class Nanodet(object):
         bboxes , confidences , class_ids = infotrans(all_box)
         print("viz time: {:.3f}s".format(time.time() - time1))
         self.class_names = dict(zip(class_ids,class_names))
-        image = meta["raw_img"][0].copy()
         np.random.seed(12345)
         for bb, conf, cid in zip(bboxes, confidences, class_ids):
             bbox_colors = {key: np.random.randint(0, 255, size=(3,)).tolist() for key in self.class_names.keys()}
             clr = [int(c) for c in bbox_colors[cid]]
-            cv2.rectangle(image, (bb[0], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), clr, 2)
+            cv2.rectangle(self.image, (bb[0], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), clr, 2)
             label = "{}:{:.4f}".format(self.class_names[cid], conf)
             (label_width, label_height), baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
             y_label = max(bb[1], label_height)
-            cv2.rectangle(image, (bb[0], y_label - label_height), (bb[0] + label_width, y_label + baseLine),
+            cv2.rectangle(self.image, (bb[0], y_label - label_height), (bb[0] + label_width, y_label + baseLine),
                             (255, 255, 255), cv2.FILLED)
-            cv2.putText(image, label, (bb[0], y_label), cv2.FONT_HERSHEY_SIMPLEX, 0.5, clr, 2)
+            cv2.putText(self.image, label, (bb[0], y_label), cv2.FONT_HERSHEY_SIMPLEX, 0.5, clr, 2)
         bboxes = np.array(bboxes).astype('int')
         confidences = np.array(confidences)
-        return bboxes , confidences , class_ids , image
+        return bboxes , confidences , class_ids , self.image
