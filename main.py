@@ -5,8 +5,8 @@ from motrackers import CentroidTracker, CentroidKF_Tracker, SORT, IOUTracker
 from motrackers.utils import draw_tracks
 from nanodet.util import Logger, cfg, load_config, load_model_weight
 
-VIDEO_FILE = r"D:\shijue\LiquidDrop\22.avi"
-WEIGHTS_PATH = 'weight/LiquidV4.pth'
+VIDEO_FILE = "test.avi"
+WEIGHTS_PATH = 'weight/LiquidV5.pth'
 CONFIG_FILE_PATH = 'config/LiquidDetect416.yml'
 CHOSEN_TRACKER = 'SORT'
 CONFIDENCE_THRESHOLD = 0.4 # 目标检测的置信度筛选
